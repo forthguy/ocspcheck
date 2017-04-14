@@ -154,13 +154,8 @@ func main() {
 		fmt.Println("sending OCSP request to", server)
 
 		var resp *http.Response
-		if len(ocspRequest) > 256 {
-			buf := bytes.NewBuffer(ocspRequest)
-			resp, err = http.Post(server, "application/ocsp-request", buf)
-		} else {
-			reqURL := server + "/" + base64.StdEncoding.EncodeToString(ocspRequest)
-			resp, err = http.Get(reqURL)
-		}
+		buf := bytes.NewBuffer(ocspRequest)
+		resp, err = http.Post(server, "application/ocsp-request", buf)
 
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "[!] %v\n", err)
@@ -212,21 +207,24 @@ func main() {
 		}
 	}
 
+    os.Exit(1)
+
 }
 
+
+// All hacked up for now.
 func showOCSPResponse(res *ocsp.Response, issuer *x509.Certificate) {
-	fmt.Printf("\tCertificate status: ")
 	switch res.Status {
 	case ocsp.Good:
-		fmt.Println("good")
+		os.Exit(100)
 	case ocsp.Revoked:
-		fmt.Println("revoked")
+		os.Exit(101)
 	case ocsp.ServerFailed:
-		fmt.Println("server failed")
+	    os.Exit(102)
 	case ocsp.Unknown:
-		fmt.Println("unknown")
+		os.Exit(103)
 	default:
-		fmt.Println("unknown response received from server")
+		os.Exit(103)
 	}
 
 	fmt.Printf("\tCertificate serial number: %s\n", res.SerialNumber)
