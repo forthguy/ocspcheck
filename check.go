@@ -6,7 +6,6 @@ import (
 	_ "crypto/sha256"
 	"crypto/tls"
 	"crypto/x509" // used in requesting OCSP response
-	"encoding/base64"
 	"encoding/pem"
 	"errors"
 	"flag"
